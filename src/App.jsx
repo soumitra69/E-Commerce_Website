@@ -25,10 +25,12 @@ import ProductDetail from "./Component/ProductDetails";
 
 
 // ==========================================
-// CART PAGE
+// CART / CHECKOUT
 // ==========================================
 
 import Cart from "./Component/Cart";
+import Checkout from "./Component/Checkout";
+import OrderSuccess from "./Component/OrderSuccess";
 
 
 // ==========================================
@@ -55,11 +57,8 @@ function App() {
             <Routes>
 
                 {/* ==========================================
-                    USER ROUTES
+                    HOME
                 ========================================== */}
-
-
-                {/* HOME */}
 
                 <Route
                     path="/"
@@ -72,7 +71,9 @@ function App() {
                 />
 
 
-                {/* DASHBOARD */}
+                {/* ==========================================
+                    USER ROUTES
+                ========================================== */}
 
                 <Route
                     path="/dashboard"
@@ -81,18 +82,12 @@ function App() {
                     }
                 />
 
-
-                {/* MEN */}
-
                 <Route
                     path="/men"
                     element={
                         <Men />
                     }
                 />
-
-
-                {/* WOMEN */}
 
                 <Route
                     path="/women"
@@ -101,9 +96,6 @@ function App() {
                     }
                 />
 
-
-                {/* ACCESSORIES */}
-
                 <Route
                     path="/accessories"
                     element={
@@ -111,18 +103,12 @@ function App() {
                     }
                 />
 
-
-                {/* JOURNAL */}
-
                 <Route
                     path="/journal"
                     element={
                         <Journal />
                     }
                 />
-
-
-                {/* SEARCH */}
 
                 <Route
                     path="/search"
@@ -157,11 +143,32 @@ function App() {
 
 
                 {/* ==========================================
-                    ADMIN ROUTES
+                    CHECKOUT
                 ========================================== */}
 
+                <Route
+                    path="/checkout"
+                    element={
+                        <Checkout />
+                    }
+                />
 
-                {/* ADMIN LOGIN */}
+
+                {/* ==========================================
+                    ORDER SUCCESS
+                ========================================== */}
+
+                <Route
+                    path="/order-success"
+                    element={
+                        <OrderSuccess />
+                    }
+                />
+
+
+                {/* ==========================================
+                    ADMIN LOGIN
+                ========================================== */}
 
                 <Route
                     path="/adminlogin"
@@ -171,7 +178,9 @@ function App() {
                 />
 
 
-                {/* ADMIN DASHBOARD */}
+                {/* ==========================================
+                    ADMIN DASHBOARD
+                ========================================== */}
 
                 <Route
                     path="/admindashboard"
@@ -200,7 +209,6 @@ function App() {
         </CartProvider>
 
     );
-
 }
 
 

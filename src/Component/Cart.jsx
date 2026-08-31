@@ -11,9 +11,7 @@ import {
     ArrowLeft,
 } from "lucide-react";
 
-
 function Cart() {
-
     const navigate = useNavigate();
 
     const {
@@ -25,28 +23,13 @@ function Cart() {
         clearCart,
     } = useCart();
 
-
-    // ==========================================
-    // FORMAT PRICE
-    // ==========================================
-
     const formatPrice = (price) => {
-
-        return Number(price || 0).toLocaleString(
-            "en-IN"
-        );
-
+        return Number(price || 0).toLocaleString("en-IN");
     };
 
-
-    // ==========================================
     // EMPTY CART
-    // ==========================================
-
     if (cartItems.length === 0) {
-
         return (
-
             <div
                 className="min-h-screen"
                 style={{
@@ -54,9 +37,7 @@ function Cart() {
                     color: "#201E1B",
                 }}
             >
-
                 <Header />
-
 
                 <main
                     className="
@@ -69,7 +50,6 @@ function Cart() {
                         text-center
                     "
                 >
-
                     <p
                         className="
                             font-mono
@@ -83,7 +63,6 @@ function Cart() {
                         Norden / Cart
                     </p>
 
-
                     <h1
                         className="
                             font-display
@@ -95,7 +74,6 @@ function Cart() {
                         Your Cart Is Empty
                     </h1>
 
-
                     <p
                         className="
                             text-[#4a4740]
@@ -104,18 +82,13 @@ function Cart() {
                             mb-8
                         "
                     >
-                        You haven't added anything
-                        to your cart yet. Explore
-                        our collection and find
-                        something you love.
+                        You haven't added anything to your cart yet.
+                        Explore our collection and find something you love.
                     </p>
-
 
                     <button
                         type="button"
-                        onClick={() =>
-                            navigate("/women")
-                        }
+                        onClick={() => navigate("/women")}
                         className="
                             px-8
                             py-4
@@ -130,24 +103,14 @@ function Cart() {
                     >
                         Continue Shopping
                     </button>
-
                 </main>
 
-
                 <Footer />
-
             </div>
-
         );
     }
 
-
-    // ==========================================
-    // CART PAGE
-    // ==========================================
-
     return (
-
         <div
             className="min-h-screen"
             style={{
@@ -155,9 +118,7 @@ function Cart() {
                 color: "#201E1B",
             }}
         >
-
             <Header />
-
 
             <main
                 className="
@@ -170,11 +131,7 @@ function Cart() {
                     md:py-16
                 "
             >
-
-                {/* ==================================
-                    PAGE HEADER
-                ================================== */}
-
+                {/* HEADER */}
                 <div
                     className="
                         flex
@@ -184,9 +141,7 @@ function Cart() {
                         mb-10
                     "
                 >
-
                     <div>
-
                         <p
                             className="
                                 font-mono
@@ -200,7 +155,6 @@ function Cart() {
                             Norden / Cart
                         </p>
 
-
                         <h1
                             className="
                                 font-display
@@ -210,11 +164,7 @@ function Cart() {
                         >
                             Your Cart
                         </h1>
-
                     </div>
-
-
-                    {/* ITEM COUNT */}
 
                     <p
                         className="
@@ -228,27 +178,17 @@ function Cart() {
                     >
                         {cartItems.reduce(
                             (total, item) =>
-                                total +
-                                Number(
-                                    item.quantity || 0
-                                ),
+                                total + Number(item.quantity || 0),
                             0
                         )}{" "}
                         Items
                     </p>
-
                 </div>
 
-
-                {/* ==================================
-                    BACK TO SHOP
-                ================================== */}
-
+                {/* CONTINUE SHOPPING */}
                 <button
                     type="button"
-                    onClick={() =>
-                        navigate("/women")
-                    }
+                    onClick={() => navigate("/women")}
                     className="
                         flex
                         items-center
@@ -263,17 +203,9 @@ function Cart() {
                         mb-10
                     "
                 >
-
                     <ArrowLeft size={14} />
-
                     Continue Shopping
-
                 </button>
-
-
-                {/* ==================================
-                    CART LAYOUT
-                ================================== */}
 
                 <div
                     className="
@@ -283,299 +215,205 @@ function Cart() {
                         lg:gap-16
                     "
                 >
-
-                    {/* ==================================
-                        CART PRODUCTS
-                    ================================== */}
-
+                    {/* PRODUCTS */}
                     <section>
+                        {cartItems.map((item) => (
+                            <div
+                                key={item.id}
+                                className="
+                                    border-t
+                                    border-[#C8C0B0]
+                                    py-6
+                                    flex
+                                    gap-4
+                                    sm:gap-6
+                                "
+                            >
+                                {/* IMAGE */}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        navigate(`/product/${item.id}`)
+                                    }
+                                    className="shrink-0"
+                                >
+                                    <img
+                                        src={item.thumbnail}
+                                        alt={item.title}
+                                        className="
+                                            w-24
+                                            h-32
+                                            sm:w-32
+                                            sm:h-40
+                                            object-cover
+                                            bg-[#DED7C8]
+                                        "
+                                        onError={(e) => {
+                                            e.currentTarget.src =
+                                                "https://via.placeholder.com/400x500?text=Product";
+                                        }}
+                                    />
+                                </button>
 
-                        {cartItems.map(
-                            (item) => (
-
+                                {/* DETAILS */}
                                 <div
-                                    key={item.id}
                                     className="
-                                        border-t
-                                        border-[#C8C0B0]
-                                        py-6
+                                        flex-1
+                                        min-w-0
                                         flex
-                                        gap-4
-                                        sm:gap-6
+                                        flex-col
                                     "
                                 >
-
-                                    {/* PRODUCT IMAGE */}
+                                    <p
+                                        className="
+                                            font-mono
+                                            text-[10px]
+                                            uppercase
+                                            tracking-wide
+                                            text-[#5F6B4A]
+                                            mb-2
+                                        "
+                                    >
+                                        {item.category || "Women"}
+                                    </p>
 
                                     <button
                                         type="button"
                                         onClick={() =>
-                                            navigate(
-                                                `/product/${item.id}`
-                                            )
+                                            navigate(`/product/${item.id}`)
                                         }
                                         className="
-                                            shrink-0
+                                            text-left
+                                            text-base
+                                            sm:text-lg
+                                            hover:opacity-60
+                                            transition
                                         "
                                     >
-
-                                        <img
-                                            src={
-                                                item.thumbnail
-                                            }
-                                            alt={
-                                                item.title
-                                            }
-                                            className="
-                                                w-24
-                                                h-32
-                                                sm:w-32
-                                                sm:h-40
-                                                object-cover
-                                                bg-[#DED7C8]
-                                            "
-                                            onError={(e) => {
-
-                                                e.currentTarget.src =
-                                                    "https://via.placeholder.com/400x500?text=Product";
-
-                                            }}
-                                        />
-
+                                        {item.title}
                                     </button>
 
-
-                                    {/* PRODUCT INFORMATION */}
-
-                                    <div
+                                    <p
                                         className="
-                                            flex-1
-                                            min-w-0
-                                            flex
-                                            flex-col
+                                            font-mono
+                                            text-sm
+                                            mt-2
                                         "
                                     >
+                                        ₹{formatPrice(item.price)}
+                                    </p>
 
-                                        {/* CATEGORY */}
-
-                                        <p
-                                            className="
-                                                font-mono
-                                                text-[10px]
-                                                uppercase
-                                                tracking-wide
-                                                text-[#5F6B4A]
-                                                mb-2
-                                            "
-                                        >
-                                            {item.category ||
-                                                "Women"}
-                                        </p>
-
-
-                                        {/* TITLE */}
-
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                navigate(
-                                                    `/product/${item.id}`
-                                                )
-                                            }
-                                            className="
-                                                text-left
-                                                text-base
-                                                sm:text-lg
-                                                hover:opacity-60
-                                                transition
-                                            "
-                                        >
-                                            {item.title}
-                                        </button>
-
-
-                                        {/* PRICE */}
-
-                                        <p
-                                            className="
-                                                font-mono
-                                                text-sm
-                                                mt-2
-                                            "
-                                        >
-                                            ₹
-                                            {formatPrice(
-                                                item.price
-                                            )}
-                                        </p>
-
-
-                                        {/* QUANTITY */}
-
+                                    {/* QUANTITY */}
+                                    <div
+                                        className="
+                                            mt-auto
+                                            pt-5
+                                            flex
+                                            items-center
+                                            justify-between
+                                            gap-4
+                                        "
+                                    >
                                         <div
                                             className="
-                                                mt-auto
-                                                pt-5
                                                 flex
                                                 items-center
-                                                justify-between
-                                                gap-4
+                                                border
+                                                border-[#BEB6A6]
                                             "
                                         >
-
-                                            {/* QUANTITY BOX */}
-
-                                            <div
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    decreaseQuantity(item.id)
+                                                }
                                                 className="
+                                                    w-8
+                                                    h-8
                                                     flex
                                                     items-center
-                                                    border
-                                                    border-[#BEB6A6]
+                                                    justify-center
+                                                    hover:bg-[#DED7C8]
                                                 "
                                             >
+                                                <Minus size={13} />
+                                            </button>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        decreaseQuantity(
-                                                            item.id
-                                                        )
-                                                    }
-                                                    className="
-                                                        w-8
-                                                        h-8
-                                                        flex
-                                                        items-center
-                                                        justify-center
-                                                        hover:bg-[#DED7C8]
-                                                        transition
-                                                    "
-                                                    aria-label="Decrease quantity"
-                                                >
-
-                                                    <Minus
-                                                        size={13}
-                                                    />
-
-                                                </button>
-
-
-                                                <span
-                                                    className="
-                                                        w-8
-                                                        text-center
-                                                        font-mono
-                                                        text-xs
-                                                    "
-                                                >
-                                                    {
-                                                        item.quantity
-                                                    }
-                                                </span>
-
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        increaseQuantity(
-                                                            item.id
-                                                        )
-                                                    }
-                                                    className="
-                                                        w-8
-                                                        h-8
-                                                        flex
-                                                        items-center
-                                                        justify-center
-                                                        hover:bg-[#DED7C8]
-                                                        transition
-                                                    "
-                                                    aria-label="Increase quantity"
-                                                >
-
-                                                    <Plus
-                                                        size={13}
-                                                    />
-
-                                                </button>
-
-                                            </div>
-
-
-                                            {/* REMOVE */}
+                                            <span
+                                                className="
+                                                    w-8
+                                                    text-center
+                                                    font-mono
+                                                    text-xs
+                                                "
+                                            >
+                                                {item.quantity}
+                                            </span>
 
                                             <button
                                                 type="button"
                                                 onClick={() =>
-                                                    removeFromCart(
-                                                        item.id
-                                                    )
+                                                    increaseQuantity(item.id)
                                                 }
                                                 className="
+                                                    w-8
+                                                    h-8
                                                     flex
                                                     items-center
-                                                    gap-2
-                                                    font-mono
-                                                    text-[10px]
-                                                    uppercase
-                                                    tracking-widest
-                                                    text-[#9C4A2E]
-                                                    hover:opacity-60
-                                                    transition
+                                                    justify-center
+                                                    hover:bg-[#DED7C8]
                                                 "
                                             >
-
-                                                <Trash2
-                                                    size={13}
-                                                />
-
-                                                <span className="hidden sm:inline">
-                                                    Remove
-                                                </span>
-
+                                                <Plus size={13} />
                                             </button>
-
                                         </div>
 
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                removeFromCart(item.id)
+                                            }
+                                            className="
+                                                flex
+                                                items-center
+                                                gap-2
+                                                font-mono
+                                                text-[10px]
+                                                uppercase
+                                                tracking-widest
+                                                text-[#9C4A2E]
+                                            "
+                                        >
+                                            <Trash2 size={13} />
+                                            <span className="hidden sm:inline">
+                                                Remove
+                                            </span>
+                                        </button>
                                     </div>
-
-
-                                    {/* ITEM TOTAL */}
-
-                                    <div
-                                        className="
-                                            hidden
-                                            sm:block
-                                            font-mono
-                                            text-sm
-                                            whitespace-nowrap
-                                        "
-                                    >
-                                        ₹
-                                        {formatPrice(
-                                            Number(
-                                                item.price
-                                            ) *
-                                            Number(
-                                                item.quantity
-                                            )
-                                        )}
-                                    </div>
-
                                 </div>
 
-                            )
-                        )}
-
+                                {/* ITEM TOTAL */}
+                                <div
+                                    className="
+                                        hidden
+                                        sm:block
+                                        font-mono
+                                        text-sm
+                                        whitespace-nowrap
+                                    "
+                                >
+                                    ₹
+                                    {formatPrice(
+                                        Number(item.price) *
+                                        Number(item.quantity)
+                                    )}
+                                </div>
+                            </div>
+                        ))}
                     </section>
 
-
-                    {/* ==================================
-                        ORDER SUMMARY
-                    ================================== */}
-
+                    {/* SUMMARY */}
                     <aside>
-
                         <div
                             className="
                                 bg-[#DED7C8]
@@ -585,7 +423,6 @@ function Cart() {
                                 lg:top-24
                             "
                         >
-
                             <h2
                                 className="
                                     font-display
@@ -597,9 +434,6 @@ function Cart() {
                                 Order Summary
                             </h2>
 
-
-                            {/* SUBTOTAL */}
-
                             <div
                                 className="
                                     flex
@@ -610,27 +444,14 @@ function Cart() {
                                     pb-4
                                 "
                             >
-
                                 <span className="text-sm">
                                     Subtotal
                                 </span>
 
-                                <span
-                                    className="
-                                        font-mono
-                                        text-sm
-                                    "
-                                >
-                                    ₹
-                                    {formatPrice(
-                                        cartTotal
-                                    )}
+                                <span className="font-mono text-sm">
+                                    ₹{formatPrice(cartTotal)}
                                 </span>
-
                             </div>
-
-
-                            {/* SHIPPING */}
 
                             <div
                                 className="
@@ -642,7 +463,6 @@ function Cart() {
                                     border-[#BEB6A6]
                                 "
                             >
-
                                 <span className="text-sm">
                                     Shipping
                                 </span>
@@ -656,11 +476,7 @@ function Cart() {
                                 >
                                     Free
                                 </span>
-
                             </div>
-
-
-                            {/* TOTAL */}
 
                             <div
                                 className="
@@ -670,40 +486,19 @@ function Cart() {
                                     py-5
                                 "
                             >
-
-                                <span
-                                    className="
-                                        font-display
-                                        text-xl
-                                    "
-                                >
+                                <span className="font-display text-xl">
                                     Total
                                 </span>
 
-                                <span
-                                    className="
-                                        font-mono
-                                        text-lg
-                                    "
-                                >
-                                    ₹
-                                    {formatPrice(
-                                        cartTotal
-                                    )}
+                                <span className="font-mono text-lg">
+                                    ₹{formatPrice(cartTotal)}
                                 </span>
-
                             </div>
 
-
-                            {/* CHECKOUT */}
-
+                            {/* REAL CHECKOUT BUTTON */}
                             <button
                                 type="button"
-                                onClick={() =>
-                                    alert(
-                                        "Checkout coming soon!"
-                                    )
-                                }
+                                onClick={() => navigate("/checkout")}
                                 className="
                                     w-full
                                     py-4
@@ -719,9 +514,6 @@ function Cart() {
                                 Proceed to Checkout
                             </button>
 
-
-                            {/* CLEAR CART */}
-
                             <button
                                 type="button"
                                 onClick={clearCart}
@@ -734,15 +526,10 @@ function Cart() {
                                     uppercase
                                     tracking-widest
                                     text-[#9C4A2E]
-                                    hover:opacity-60
-                                    transition
                                 "
                             >
                                 Clear Cart
                             </button>
-
-
-                            {/* NOTE */}
 
                             <p
                                 className="
@@ -753,30 +540,17 @@ function Cart() {
                                     mt-5
                                 "
                             >
-                                Taxes and delivery
-                                charges are calculated
+                                Taxes and delivery charges are calculated
                                 at checkout.
                             </p>
-
                         </div>
-
                     </aside>
-
                 </div>
-
             </main>
 
-
-            {/* ==================================
-                FOOTER
-            ================================== */}
-
             <Footer />
-
         </div>
-
     );
 }
-
 
 export default Cart;

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import Header from "../ComonPage/Header";
 import Footer from "../ComonPage/Footer";
+import { supabase } from "../lib/supabase";
 
 
 // ==========================================================
@@ -34,49 +35,21 @@ const defaultDashboard = {
     sectionImage:
         "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80",
 
-    shopCategories: [
-        {
-            id: "women",
-            number: "01",
-            title: "Women",
-            subtitle: "Dresses, tops & everyday essentials",
-            link: "/women",
-            image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85",
-            visible: true,
-        },
-        {
-            id: "men",
-            number: "02",
-            title: "Men",
-            subtitle: "Modern essentials for every day",
-            link: "/men",
-            image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
-            visible: true,
-        },
-        {
-            id: "accessories",
-            number: "03",
-            title: "Accessories",
-            subtitle: "The finishing touches",
-            link: "/accessories",
-            image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=1000&q=85",
-            visible: true,
-        },
-        {
-            id: "new-arrivals",
-            number: "04",
-            title: "New Arrivals",
-            subtitle: "Fresh pieces, just in",
-            link: "/women",
-            image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85",
-            visible: true,
-        },
-    ],
-
     footerText:
         "Norden — timeless essentials for everyday life.",
 };
 
+
+// ==========================================================
+// SHOP BY CATEGORY DATA
+// ==========================================================
+
+const defaultCategories = [
+    { id: "women", number: "01", title: "Women", subtitle: "Dresses, tops & everyday essentials", link: "/women", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85", visible: true, sort_order: 0 },
+    { id: "men", number: "02", title: "Men", subtitle: "Modern essentials for every day", link: "/men", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85", visible: true, sort_order: 1 },
+    { id: "accessories", number: "03", title: "Accessories", subtitle: "The finishing touches", link: "/accessories", image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=1000&q=85", visible: true, sort_order: 2 },
+    { id: "new-arrivals", number: "04", title: "New Arrivals", subtitle: "Fresh pieces, just in", link: "/women", image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85", visible: true, sort_order: 3 },
+];
 
 // ==========================================================
 // DASHBOARD
@@ -89,6 +62,9 @@ function Dashboard() {
 
     const [products, setProducts] =
         useState([]);
+
+    const [shopCategories, setShopCategories] =
+        useState(defaultCategories);
 
     const [loading, setLoading] =
         useState(true);
@@ -114,9 +90,6 @@ function Dashboard() {
                 setDashboard({
                     ...defaultDashboard,
                     ...saved,
-                    shopCategories: Array.isArray(saved.shopCategories)
-                        ? saved.shopCategories
-                        : defaultDashboard.shopCategories,
                 });
 
             } else {
@@ -182,6 +155,21 @@ function Dashboard() {
 
 
     // ======================================================
+    // LOAD SHOP CATEGORIES FROM SUPABASE
+    // ======================================================
+
+    const loadShopCategories = async () => {
+        try {
+            const { data, error } = await supabase.from("shop_categories").select("*").eq("visible", true).order("sort_order", { ascending: true });
+            if (error) throw error;
+            if (Array.isArray(data) && data.length) {
+                setShopCategories(data.map((item, index) => ({ id: item.id, number: item.number || String(index + 1).padStart(2, "0"), title: item.title || "", subtitle: item.subtitle || "", link: item.link || "/women", image: item.image_url || "", visible: item.visible !== false, sort_order: item.sort_order ?? index })));
+            } else setShopCategories(defaultCategories);
+        } catch (error) { console.error("Shop categories loading error:", error); setShopCategories(defaultCategories); }
+    };
+
+
+    // ======================================================
     // INITIAL LOAD
     // ======================================================
 
@@ -189,6 +177,7 @@ function Dashboard() {
 
         loadDashboard();
         loadProducts();
+        loadShopCategories();
 
         setLoading(false);
 
@@ -198,6 +187,11 @@ function Dashboard() {
         window.addEventListener(
             "adminDashboardUpdated",
             loadDashboard
+        );
+
+        window.addEventListener(
+            "adminShopCategoriesUpdated",
+            loadShopCategories
         );
 
 
@@ -216,6 +210,11 @@ function Dashboard() {
             window.removeEventListener(
                 "adminDashboardUpdated",
                 loadDashboard
+            );
+
+            window.removeEventListener(
+                "adminShopCategoriesUpdated",
+                loadShopCategories
             );
 
             window.removeEventListener(
@@ -629,13 +628,12 @@ function Dashboard() {
                     "
                 >
 
-                    {(dashboard.shopCategories || [])
-                        .filter((category) => category.visible !== false)
-                        .map((category, index) => (
+                    {shopCategories.map(
+                        (category) => (
 
                             <Link
-                                key={category.id || index}
-                                to={category.link || "/women"}
+                                key={category.id}
+                                to={category.link}
                                 className="
                                     group
                                     relative
@@ -654,7 +652,7 @@ function Dashboard() {
                                 >
 
                                     <img
-                                        src={category.image || "https://via.placeholder.com/700x900?text=Norden"}
+                                        src={category.image}
                                         alt={category.title}
                                         className="
                                             w-full
@@ -702,7 +700,7 @@ function Dashboard() {
                                         tracking-[0.2em]
                                     "
                                 >
-                                    {category.number || String(index + 1).padStart(2, "0")}
+                                    {category.number}
                                 </div>
 
 
@@ -779,7 +777,7 @@ function Dashboard() {
                             </Link>
 
                         )
-                        )}
+                    )}
 
                 </div>
 

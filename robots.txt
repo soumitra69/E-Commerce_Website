@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Do not crawl private/admin areas
+Disallow: /admin/
+Disallow: /adminlogin/
+Disallow: /checkout/
+Disallow: /cart/
+Disallow: /account/
+
+# Sitemap
+Sitemap: https://full-stack-ecommerse-website.vercel.app/dashboard/sitemap.xml

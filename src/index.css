@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #F1ECE1;
+    color: #201E1B;
+}
+
+.font-display {
+    font-family: "Fraunces", serif;
+}
+
+.font-mono {
+    font-family: "IBM Plex Mono", monospace;
+}
+
+.vertical-tag {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 0.25em;
+}
+
+.hero-heading {
+    font-size: clamp(2.4rem, 7vw, 4.6rem);
+}

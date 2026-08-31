@@ -27,6 +27,18 @@ import { supabase } from "../lib/supabase";
 
 
 // ==========================================================
+// DEFAULT SHOP BY CATEGORY
+// ==========================================================
+
+const DEFAULT_SHOP_CATEGORIES = [
+    { id: "women", number: "01", title: "Women", subtitle: "Dresses, tops & everyday essentials", link: "/women", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85", visible: true },
+    { id: "men", number: "02", title: "Men", subtitle: "Modern essentials for every day", link: "/men", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85", visible: true },
+    { id: "accessories", number: "03", title: "Accessories", subtitle: "The finishing touches", link: "/accessories", image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=1000&q=85", visible: true },
+    { id: "new-arrivals", number: "04", title: "New Arrivals", subtitle: "Fresh pieces, just in", link: "/women", image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85", visible: true },
+];
+
+
+// ==========================================================
 // DEFAULT DASHBOARD
 // ==========================================================
 
@@ -63,6 +75,8 @@ const DEFAULT_DASHBOARD = {
 
     sectionImage:
         "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80",
+
+    shopCategories: DEFAULT_SHOP_CATEGORIES,
 
     footerText:
         "Norden — timeless essentials for everyday life.",
@@ -125,6 +139,7 @@ function AdminDashboard() {
     const heroFileRef = useRef(null);
     const sectionFileRef = useRef(null);
     const productFileRef = useRef(null);
+    const categoryFileRef = useRef(null);
 
 
     // ======================================================
@@ -174,6 +189,23 @@ function AdminDashboard() {
             ...EMPTY_PRODUCT,
         });
 
+    // ======================================================
+    // SHOP CATEGORY STATE
+    // ======================================================
+
+    const [showCategoryForm, setShowCategoryForm] = useState(false);
+    const [editingCategoryId, setEditingCategoryId] = useState(null);
+    const [categoryForm, setCategoryForm] = useState({
+        id: "",
+        number: "",
+        title: "",
+        subtitle: "",
+        link: "/women",
+        image: "",
+        visible: true,
+    });
+    const [categoryImageError, setCategoryImageError] = useState(false);
+
 
     // ======================================================
     // IMAGE ERROR STATE
@@ -210,6 +242,9 @@ function AdminDashboard() {
             setDashboard({
                 ...DEFAULT_DASHBOARD,
                 ...saved,
+                shopCategories: Array.isArray(saved.shopCategories)
+                    ? saved.shopCategories
+                    : DEFAULT_SHOP_CATEGORIES,
             });
         } else {
             setDashboard({
@@ -447,6 +482,117 @@ function AdminDashboard() {
         if (sectionFileRef.current) {
             sectionFileRef.current.value = "";
         }
+    };
+
+
+    // ======================================================
+    // SHOP BY CATEGORY MANAGEMENT
+    // ======================================================
+
+    const openAddCategory = () => {
+        setEditingCategoryId(null);
+        setCategoryImageError(false);
+        setCategoryForm({
+            id: `category-${Date.now()}`,
+            number: String((dashboard.shopCategories?.length || 0) + 1).padStart(2, "0"),
+            title: "",
+            subtitle: "",
+            link: "/women",
+            image: "",
+            visible: true,
+        });
+        if (categoryFileRef.current) categoryFileRef.current.value = "";
+        setShowCategoryForm(true);
+    };
+
+    const openEditCategory = (category) => {
+        setEditingCategoryId(category.id);
+        setCategoryImageError(false);
+        setCategoryForm({
+            id: category.id,
+            number: category.number || "",
+            title: category.title || "",
+            subtitle: category.subtitle || "",
+            link: category.link || "/women",
+            image: category.image || "",
+            visible: category.visible !== false,
+        });
+        setShowCategoryForm(true);
+    };
+
+    const closeCategoryForm = () => {
+        setShowCategoryForm(false);
+        setEditingCategoryId(null);
+        setCategoryImageError(false);
+        setCategoryForm({ id: "", number: "", title: "", subtitle: "", link: "/women", image: "", visible: true });
+        if (categoryFileRef.current) categoryFileRef.current.value = "";
+    };
+
+    const handleCategoryChange = (event) => {
+        const { name, value, type, checked } = event.target;
+        setCategoryForm((previous) => ({ ...previous, [name]: type === "checkbox" ? checked : value }));
+        if (name === "image") setCategoryImageError(false);
+    };
+
+    const handleCategoryImageUpload = (event) => {
+        const file = event.target.files?.[0];
+        if (!validateImageFile(file)) {
+            event.target.value = "";
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setCategoryForm((previous) => ({ ...previous, image: reader.result }));
+            setCategoryImageError(false);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const saveCategory = (event) => {
+        event.preventDefault();
+        if (!categoryForm.title.trim()) {
+            setCategoryImageError(false);
+            return;
+        }
+        setDashboard((previous) => {
+            const categories = Array.isArray(previous.shopCategories) ? [...previous.shopCategories] : [];
+            const category = {
+                ...categoryForm,
+                title: categoryForm.title.trim(),
+                subtitle: categoryForm.subtitle.trim(),
+                link: categoryForm.link.trim() || "/women",
+                number: categoryForm.number.trim() || String(categories.length + 1).padStart(2, "0"),
+                visible: Boolean(categoryForm.visible),
+            };
+            if (editingCategoryId) {
+                return { ...previous, shopCategories: categories.map((item) => item.id === editingCategoryId ? category : item) };
+            }
+            return { ...previous, shopCategories: [...categories, category] };
+        });
+        closeCategoryForm();
+    };
+
+    const deleteCategory = (id) => {
+        setDashboard((previous) => ({
+            ...previous,
+            shopCategories: (previous.shopCategories || []).filter((category) => category.id !== id),
+        }));
+    };
+
+    const moveCategory = (index, direction) => {
+        setDashboard((previous) => {
+            const categories = [...(previous.shopCategories || [])];
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= categories.length) return previous;
+            [categories[index], categories[newIndex]] = [categories[newIndex], categories[index]];
+            return {
+                ...previous,
+                shopCategories: categories.map((category, categoryIndex) => ({
+                    ...category,
+                    number: String(categoryIndex + 1).padStart(2, "0"),
+                })),
+            };
+        });
     };
 
 
@@ -1117,6 +1263,10 @@ function AdminDashboard() {
                             setSectionImageError={
                                 setSectionImageError
                             }
+                            openAddCategory={openAddCategory}
+                            openEditCategory={openEditCategory}
+                            deleteCategory={deleteCategory}
+                            moveCategory={moveCategory}
                         />
                     )}
 
@@ -1180,6 +1330,25 @@ function AdminDashboard() {
                     )}
 
             </main>
+
+
+            {/* ==================================================
+                SHOP CATEGORY MODAL
+            ================================================== */}
+
+            {showCategoryForm && (
+                <CategoryModal
+                    editingCategoryId={editingCategoryId}
+                    categoryForm={categoryForm}
+                    categoryFileRef={categoryFileRef}
+                    categoryImageError={categoryImageError}
+                    handleCategoryChange={handleCategoryChange}
+                    handleCategoryImageUpload={handleCategoryImageUpload}
+                    saveCategory={saveCategory}
+                    closeCategoryForm={closeCategoryForm}
+                    setCategoryImageError={setCategoryImageError}
+                />
+            )}
 
 
             {/* ==================================================
@@ -1318,6 +1487,10 @@ function DashboardEditor({
     sectionImageError,
     setHeroImageError,
     setSectionImageError,
+    openAddCategory,
+    openEditCategory,
+    deleteCategory,
+    moveCategory,
 }) {
     return (
         <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
@@ -1634,6 +1807,72 @@ function DashboardEditor({
 
                 </div>
 
+            </section>
+
+
+            {/* ==================================================
+                SHOP BY CATEGORY
+            ================================================== */}
+
+            <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8">
+                <div className="px-5 sm:px-7 py-5 border-b border-gray-100">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <p className="text-xs uppercase tracking-widest text-gray-400">Section 03</p>
+                            <h2 className="text-xl font-bold text-gray-900 mt-1">Shop by Category</h2>
+                            <p className="text-sm text-gray-500 mt-1">Manage homepage category cards.</p>
+                        </div>
+                        <button type="button" onClick={openAddCategory} className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-gray-950 text-white rounded-xl hover:bg-gray-800">
+                            <Plus size={17} /> Add Category
+                        </button>
+                    </div>
+                </div>
+
+                <div className="p-5 sm:p-7">
+                    {(dashboard.shopCategories || []).length === 0 ? (
+                        <div className="py-14 text-center border-2 border-dashed border-gray-200 rounded-2xl">
+                            <ImageIcon size={40} className="mx-auto text-gray-300" />
+                            <h3 className="font-semibold text-gray-900 mt-4">No categories added</h3>
+                            <p className="text-sm text-gray-500 mt-1">Add a category to show it on your homepage.</p>
+                            <button type="button" onClick={openAddCategory} className="mt-5 px-5 py-3 bg-gray-950 text-white rounded-xl">Add Category</button>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {(dashboard.shopCategories || []).map((category, index) => (
+                                <div key={category.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-gray-50">
+                                    <div className="aspect-[3/2] bg-gray-100 overflow-hidden">
+                                        {category.image ? (
+                                            <img src={category.image} alt={category.title} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-400"><ImageIcon size={40} /></div>
+                                        )}
+                                    </div>
+                                    <div className="p-5">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-mono bg-gray-200 px-2 py-1 rounded">{category.number || String(index + 1).padStart(2, "0")}</span>
+                                                    <h3 className="font-bold text-lg text-gray-900 truncate">{category.title}</h3>
+                                                </div>
+                                                <p className="text-sm text-gray-500 mt-2">{category.subtitle || "No subtitle"}</p>
+                                                <p className="text-xs text-gray-400 mt-2 truncate">Link: {category.link || "/women"}</p>
+                                            </div>
+                                            <span className={`shrink-0 text-[10px] px-2 py-1 rounded-full ${category.visible !== false ? "bg-green-50 text-green-700" : "bg-gray-200 text-gray-500"}`}>
+                                                {category.visible !== false ? "Visible" : "Hidden"}
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-4 gap-2 mt-5">
+                                            <button type="button" onClick={() => moveCategory(index, -1)} disabled={index === 0} className="py-2.5 border rounded-xl text-sm disabled:opacity-30">↑</button>
+                                            <button type="button" onClick={() => moveCategory(index, 1)} disabled={index === (dashboard.shopCategories || []).length - 1} className="py-2.5 border rounded-xl text-sm disabled:opacity-30">↓</button>
+                                            <button type="button" onClick={() => openEditCategory(category)} className="py-2.5 bg-gray-900 text-white rounded-xl text-sm hover:bg-gray-800">Edit</button>
+                                            <button type="button" onClick={() => deleteCategory(category.id)} className="py-2.5 bg-red-50 text-red-600 rounded-xl text-sm hover:bg-red-100">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </section>
 
 
@@ -2023,6 +2262,82 @@ function ProductsPage({
 
             </div>
 
+        </div>
+    );
+}
+
+
+// ==========================================================
+// SHOP CATEGORY MODAL
+// ==========================================================
+
+function CategoryModal({
+    editingCategoryId,
+    categoryForm,
+    categoryFileRef,
+    categoryImageError,
+    handleCategoryChange,
+    handleCategoryImageUpload,
+    saveCategory,
+    closeCategoryForm,
+    setCategoryImageError,
+}) {
+    return (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" onMouseDown={(event) => { if (event.target === event.currentTarget) closeCategoryForm(); }}>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="relative z-10 w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-white rounded-2xl shadow-2xl" onMouseDown={(event) => event.stopPropagation()}>
+                <div className="sticky top-0 z-20 bg-white border-b px-5 sm:px-7 py-5 flex items-center justify-between">
+                    <div>
+                        <p className="text-xs uppercase tracking-widest text-gray-400">Homepage</p>
+                        <h2 className="text-2xl font-bold text-gray-900 mt-1">{editingCategoryId ? "Edit Category" : "Add Category"}</h2>
+                    </div>
+                    <button type="button" onClick={closeCategoryForm} className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-red-100 hover:text-red-600"><X size={20} /></button>
+                </div>
+
+                <form onSubmit={saveCategory} className="p-5 sm:p-7">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-900 mb-3">Category Image</label>
+                            <div className="aspect-[3/2] rounded-2xl overflow-hidden bg-gray-100 border border-gray-200">
+                                {categoryForm.image && !categoryImageError ? (
+                                    <img src={categoryForm.image} alt="Category preview" className="w-full h-full object-cover" onError={() => setCategoryImageError(true)} />
+                                ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-400"><ImageIcon size={45} /><p className="text-sm mt-3">{categoryImageError ? "Image could not be loaded" : "No image selected"}</p></div>
+                                )}
+                            </div>
+                            <input ref={categoryFileRef} type="file" accept="image/*" onChange={handleCategoryImageUpload} className="hidden" />
+                            <div className="grid grid-cols-2 gap-3 mt-4">
+                                <button type="button" onClick={() => categoryFileRef.current?.click()} className="inline-flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-xl hover:bg-gray-50"><Upload size={17} /> Upload Image</button>
+                                {categoryForm.image ? (
+                                    <button type="button" onClick={() => handleCategoryChange({ target: { name: "image", value: "", type: "text" } })} className="inline-flex items-center justify-center gap-2 px-4 py-3 border border-red-200 text-red-600 rounded-xl hover:bg-red-50"><Trash2 size={17} /> Remove</button>
+                                ) : (
+                                    <div className="flex items-center justify-center text-sm text-gray-400">JPG / PNG / WEBP</div>
+                                )}
+                            </div>
+                            <div className="mt-5">
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Or Paste Image URL</label>
+                                <input type="url" name="image" value={categoryForm.image || ""} onChange={handleCategoryChange} placeholder="https://example.com/category.jpg" className="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-gray-900" />
+                            </div>
+                        </div>
+
+                        <div className="space-y-5">
+                            <TextInput label="Category Name" name="title" value={categoryForm.title} onChange={handleCategoryChange} placeholder="Women" required />
+                            <TextArea label="Subtitle" name="subtitle" value={categoryForm.subtitle} onChange={handleCategoryChange} rows={3} placeholder="Dresses, tops & everyday essentials" />
+                            <TextInput label="Shop Link" name="link" value={categoryForm.link} onChange={handleCategoryChange} placeholder="/women" />
+                            <TextInput label="Number" name="number" value={categoryForm.number} onChange={handleCategoryChange} placeholder="01" />
+                            <label className="flex items-center justify-between gap-4 border border-gray-200 rounded-xl p-4 cursor-pointer">
+                                <span><span className="block font-semibold text-gray-900">Show category</span><span className="block text-xs text-gray-500 mt-1">Display this card on the homepage.</span></span>
+                                <input type="checkbox" name="visible" checked={categoryForm.visible} onChange={handleCategoryChange} className="w-5 h-5" />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t mt-8 pt-6">
+                        <button type="button" onClick={closeCategoryForm} className="px-5 py-3 border border-gray-200 rounded-xl hover:bg-gray-50">Cancel</button>
+                        <button type="submit" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-950 text-white rounded-xl hover:bg-gray-800"><Save size={17} /> {editingCategoryId ? "Update Category" : "Add Category"}</button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

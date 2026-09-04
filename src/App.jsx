@@ -31,6 +31,8 @@ import ProductDetail from "./Component/ProductDetails";
 import Cart from "./Component/Cart";
 import Checkout from "./Component/Checkout";
 import OrderSuccess from "./Component/OrderSuccess";
+import LoginSignup from "./Component/login-signup";
+import Account from "./Component/Account";
 
 
 // ==========================================
@@ -163,6 +165,16 @@ function App() {
                     element={
                         <OrderSuccess />
                     }
+                />
+
+                <Route
+                    path="/login-signup"
+                    element={<LoginSignup />}
+                />
+
+                <Route
+                    path="/account"
+                    element={<Account />}
                 />
 
 

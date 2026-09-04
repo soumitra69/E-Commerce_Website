@@ -11,6 +11,7 @@ import {
     X,
     Search,
     ShoppingBag,
+    UserRound,
     LogOut,
     Plus,
     Minus,
@@ -459,6 +460,15 @@ function Header() {
                     {/* ==================================================
                         SHOPPING BAG
                     ================================================== */}
+
+                    <button
+                        type="button"
+                        aria-label="Account"
+                        onClick={() => navigate("/account")}
+                        className="hover:opacity-60 transition-opacity"
+                    >
+                        <UserRound size={18} />
+                    </button>
 
                     <div className="relative">
 

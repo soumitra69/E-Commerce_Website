@@ -3,6 +3,20 @@ import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:5000" : "");
 
+const readResponse = async (response) => {
+    const body = await response.text();
+
+    if (!body) {
+        return { message: `Server returned an empty response (${response.status}).` };
+    }
+
+    try {
+        return JSON.parse(body);
+    } catch {
+        return { message: `Server returned an invalid response (${response.status}).` };
+    }
+};
+
 export default function App() {
     const navigate = useNavigate();
     const [mode, setMode] = useState("login");
@@ -68,7 +82,7 @@ export default function App() {
                         ...(otpSent ? { token: otp } : {}),
                     }),
                 });
-                const data = await response.json();
+                const data = await readResponse(response);
                 if (!response.ok) throw new Error(data.message || "OTP request failed");
 
                 if (!otpSent) {
@@ -126,7 +140,7 @@ export default function App() {
                     }
                 );
 
-                const data = await response.json();
+                const data = await readResponse(response);
 
                 if (!response.ok) {
                     throw new Error(data.message || "Registration failed");
@@ -179,7 +193,7 @@ export default function App() {
                     }
                 );
 
-                const data = await response.json();
+                const data = await readResponse(response);
 
                 if (!response.ok) {
                     throw new Error(data.message || "Login failed");

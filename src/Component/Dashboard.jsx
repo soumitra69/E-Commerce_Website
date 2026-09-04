@@ -160,6 +160,12 @@ function Dashboard() {
 
     const loadShopCategories = async () => {
         try {
+            const savedDashboard = JSON.parse(localStorage.getItem("adminDashboard"));
+            if (Array.isArray(savedDashboard?.shopCategories)) {
+                setShopCategories(savedDashboard.shopCategories);
+                return;
+            }
+
             const { data, error } = await supabase.from("shop_categories").select("*").eq("visible", true).order("sort_order", { ascending: true });
             if (error) throw error;
             if (Array.isArray(data) && data.length) {
@@ -190,6 +196,21 @@ function Dashboard() {
         );
 
         window.addEventListener(
+            "adminDashboardUpdated",
+            loadShopCategories
+        );
+
+        window.addEventListener(
+            "storage",
+            loadDashboard
+        );
+
+        window.addEventListener(
+            "storage",
+            loadShopCategories
+        );
+
+        window.addEventListener(
             "adminShopCategoriesUpdated",
             loadShopCategories
         );
@@ -210,6 +231,21 @@ function Dashboard() {
             window.removeEventListener(
                 "adminDashboardUpdated",
                 loadDashboard
+            );
+
+            window.removeEventListener(
+                "adminDashboardUpdated",
+                loadShopCategories
+            );
+
+            window.removeEventListener(
+                "storage",
+                loadDashboard
+            );
+
+            window.removeEventListener(
+                "storage",
+                loadShopCategories
             );
 
             window.removeEventListener(

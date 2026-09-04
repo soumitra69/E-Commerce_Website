@@ -426,14 +426,6 @@ function Header() {
                     "
                 >
 
-                    <Link
-                        to="/adminlogin"
-                        onClick={handleNavigation}
-                        className="hidden text-[10px] font-mono uppercase tracking-widest text-[#9C4A2E] hover:opacity-60 lg:block"
-                    >
-                        Admin
-                    </Link>
-
                     {/* ==================================================
                         SEARCH
                     ================================================== */}
@@ -1256,15 +1248,6 @@ function Header() {
                     >
                         Journal
                     </Link>
-
-                    <Link
-                        to="/adminlogin"
-                        onClick={handleNavigation}
-                        className="text-[#9C4A2E]"
-                    >
-                        Admin access
-                    </Link>
-
 
                     {/* MOBILE CART */}
 

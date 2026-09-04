@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV
+const DEFAULT_API_BASE_URL = import.meta.env.DEV
     ? "http://localhost:5000"
-    : "https://e-commerce-website-backend-rqmh.onrender.com");
+    : "https://e-commerce-website-backend-rqmh.onrender.com";
+
+const API_BASE_URL = (import.meta.env.VITE_API_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, "");
 
 const readResponse = async (response) => {
     const body = await response.text();
@@ -33,6 +35,7 @@ export default function App() {
     });
 
     const [message, setMessage] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
@@ -57,6 +60,7 @@ export default function App() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
         // =========================
         // SIGN UP
@@ -70,16 +74,19 @@ export default function App() {
                 !formData.confirmPassword
             ) {
                 setMessage("Please fill in all fields.");
+                setIsSubmitting(false);
                 return;
             }
 
             if (formData.password.length < 6) {
                 setMessage("Password must be at least 6 characters.");
+                setIsSubmitting(false);
                 return;
             }
 
             if (formData.password !== formData.confirmPassword) {
                 setMessage("Passwords do not match.");
+                setIsSubmitting(false);
                 return;
             }
 
@@ -107,7 +114,15 @@ export default function App() {
 
                 console.log("Register response:", data);
 
-                setMessage("Account created successfully!");
+                if (data.token && data.user) {
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    window.dispatchEvent(new Event("authChanged"));
+                    navigate("/dashboard");
+                    return;
+                }
+
+                setMessage(data.message || "Account created. Check your email to confirm your account.");
 
                 // Switch to Login after successful registration
                 setMode("login");
@@ -125,6 +140,8 @@ export default function App() {
                 setMessage(
                     error.message || "Signup failed. Please try again."
                 );
+            } finally {
+                setIsSubmitting(false);
             }
         } else {
             // =========================
@@ -133,6 +150,7 @@ export default function App() {
 
             if (!formData.email || !formData.password) {
                 setMessage("Please enter your email and password.");
+                setIsSubmitting(false);
                 return;
             }
 
@@ -159,6 +177,10 @@ export default function App() {
 
                 console.log("Login response:", data);
 
+                if (!data.token || !data.user) {
+                    throw new Error("Login failed. Please try again.");
+                }
+
                 // =========================
                 // SAVE JWT TOKEN
                 // =========================
@@ -181,6 +203,8 @@ export default function App() {
                     error.message ||
                     "Login failed. Please check your credentials."
                 );
+            } finally {
+                setIsSubmitting(false);
             }
         }
     };
@@ -491,10 +515,9 @@ export default function App() {
                         {/* Message */}
                         {message && (
                             <div
-                                className={`rounded-xl px-4 py-3 text-xs font-medium ${message.includes(
-                                    "successfully"
-                                ) ||
-                                        message.includes("successful")
+                                className={`rounded-xl px-4 py-3 text-xs font-medium ${/success|created|check your email|confirm/i.test(
+                                    message
+                                )
                                         ? "bg-emerald-50 text-emerald-700"
                                         : "bg-red-50 text-red-600"
                                     }`}
@@ -506,11 +529,14 @@ export default function App() {
                         {/* Submit Button */}
                         <button
                             type="submit"
+                            disabled={isSubmitting}
                             className="flex h-12 w-full items-center justify-center gap-2 bg-[#9C4A2E] text-sm font-bold text-[#F1ECE1] transition hover:bg-[#B65B3A] active:translate-y-px"
                         >
-                            {mode === "login"
-                                ? "Sign in"
-                                : "Create account"}
+                            {isSubmitting
+                                ? "Please wait..."
+                                : mode === "login"
+                                    ? "Sign in"
+                                    : "Create account"}
 
                             <span className="text-lg">
                                 →

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Header from "../ComonPage/Header";
 import Footer from "../ComonPage/Footer";
 import { supabase } from "../lib/supabase";
+import { useCart } from "../Context/CartContext";
 
 
 // ==========================================================
@@ -56,6 +57,8 @@ const defaultCategories = [
 // ==========================================================
 
 function Dashboard() {
+
+    const { addToCart } = useCart();
 
     const [dashboard, setDashboard] =
         useState(defaultDashboard);
@@ -1106,6 +1109,7 @@ function Dashboard() {
 
                                         <div
                                             className="
+                                                relative
                                                 aspect-[3/4]
                                                 overflow-hidden
                                                 bg-[#E4DED1]
@@ -1135,6 +1139,18 @@ function Dashboard() {
 
                                                 }}
                                             />
+
+                                            <button
+                                                type="button"
+                                                onClick={(event) => {
+                                                    event.preventDefault();
+                                                    event.stopPropagation();
+                                                    addToCart(product);
+                                                }}
+                                                className="absolute inset-x-3 bottom-3 translate-y-2 bg-[#201E1B] px-3 py-3 font-mono text-[10px] uppercase tracking-widest text-[#F1ECE1] opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+                                            >
+                                                Add to cart
+                                            </button>
 
                                         </div>
 

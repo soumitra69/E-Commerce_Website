@@ -347,13 +347,6 @@ export default function App() {
                             </div>
                         </div>
 
-                        {authMethod === "otp" && otpChannel === "phone" && (
-                            <div>
-                                <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-slate-700">Mobile number</label>
-                                <input id="phone" name="phone" type="tel" placeholder="+91 9876543210" value={formData.phone} onChange={handleChange} className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
-                            </div>
-                        )}
-
                         {/* Password */}
                         <div>
                             <div className="mb-2 flex items-center justify-between">

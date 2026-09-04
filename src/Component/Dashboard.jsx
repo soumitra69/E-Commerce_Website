@@ -160,17 +160,15 @@ function Dashboard() {
 
     const loadShopCategories = async () => {
         try {
-            const savedDashboard = JSON.parse(localStorage.getItem("adminDashboard"));
-            if (Array.isArray(savedDashboard?.shopCategories)) {
-                setShopCategories(savedDashboard.shopCategories);
-                return;
-            }
-
             const { data, error } = await supabase.from("shop_categories").select("*").eq("visible", true).order("sort_order", { ascending: true });
             if (error) throw error;
             if (Array.isArray(data) && data.length) {
                 setShopCategories(data.map((item, index) => ({ id: item.id, number: item.number || String(index + 1).padStart(2, "0"), title: item.title || "", subtitle: item.subtitle || "", link: item.link || "/women", image: item.image_url || "", visible: item.visible !== false, sort_order: item.sort_order ?? index })));
-            } else setShopCategories(defaultCategories);
+                return;
+            }
+
+            const savedDashboard = JSON.parse(localStorage.getItem("adminDashboard"));
+            setShopCategories(Array.isArray(savedDashboard?.shopCategories) ? savedDashboard.shopCategories : defaultCategories);
         } catch (error) { console.error("Shop categories loading error:", error); setShopCategories(defaultCategories); }
     };
 

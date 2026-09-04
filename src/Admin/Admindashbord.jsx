@@ -333,11 +333,31 @@ function AdminDashboard() {
     // SAVE DASHBOARD
     // ======================================================
 
-    const saveDashboard = () => {
+    const saveDashboard = async () => {
         localStorage.setItem(
             "adminDashboard",
             JSON.stringify(dashboard)
         );
+
+        try {
+            const categories = (dashboard.shopCategories || []).map((category, sortOrder) => ({
+                id: category.id,
+                number: category.number || String(sortOrder + 1).padStart(2, "0"),
+                title: category.title,
+                subtitle: category.subtitle || "",
+                link: category.link || "/women",
+                image_url: category.image || "",
+                visible: category.visible !== false,
+                sort_order: sortOrder,
+            }));
+
+            const { error } = await supabase.from("shop_categories").upsert(categories, { onConflict: "id" });
+            if (error) throw error;
+        } catch (error) {
+            console.error("Failed to sync shop categories:", error);
+            alert("Home settings were saved on this device, but categories could not sync to the server.");
+            return;
+        }
 
         window.dispatchEvent(
             new Event("adminDashboardUpdated")

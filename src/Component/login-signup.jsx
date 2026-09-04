@@ -193,20 +193,17 @@ export default function App() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4 sm:p-6">
-            <div className="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-300/40 lg:grid lg:grid-cols-[42%_58%]">
+        <div className="min-h-screen bg-[#F1ECE1] px-4 py-8 text-[#191817] sm:px-6 lg:py-12">
+            <div className="mx-auto grid w-full max-w-5xl overflow-hidden border border-black/10 bg-[#F8F5EE] shadow-[0_24px_70px_rgba(25,24,23,0.12)] lg:grid-cols-[42%_58%]">
 
                 {/* =========================
                     LEFT SIDE
                 ========================= */}
-                <div className="relative hidden min-h-[680px] overflow-hidden bg-gradient-to-br from-indigo-600 to-purple-700 p-10 text-white lg:flex lg:flex-col lg:justify-between">
-
-                    <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10" />
-                    <div className="absolute -bottom-28 -left-24 h-64 w-64 rounded-full bg-white/10" />
+                <div className="relative hidden min-h-[680px] overflow-hidden bg-[#191817] p-10 text-[#F1ECE1] lg:flex lg:flex-col lg:justify-between">
 
                     <div className="relative z-10 flex items-center gap-3">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 text-xl font-bold backdrop-blur-sm">
-                            S
+                        <div className="flex h-11 w-11 items-center justify-center border border-[#F1ECE1]/40 text-xl font-display">
+                            N
                         </div>
 
                         <span className="text-xl font-bold">
@@ -228,9 +225,7 @@ export default function App() {
                         </p>
 
                         <div className="mt-8 flex items-center gap-3">
-                            <div className="h-1 w-10 rounded-full bg-white" />
-                            <div className="h-1 w-3 rounded-full bg-white/40" />
-                            <div className="h-1 w-3 rounded-full bg-white/40" />
+                            <div className="h-px w-16 bg-[#B65B3A]" />
                         </div>
                     </div>
 
@@ -247,13 +242,13 @@ export default function App() {
                 <div className="flex min-h-[680px] flex-col justify-center p-6 sm:p-10 lg:p-14">
 
                     {/* Login / Signup Tabs */}
-                    <div className="mb-8 flex w-full rounded-xl bg-slate-100 p-1">
+                    <div className="mb-8 flex w-full border border-black/10 bg-[#E8E1D5] p-1">
                         <button
                             type="button"
                             onClick={() => switchMode("login")}
                             className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition ${mode === "login"
-                                    ? "bg-white text-indigo-600 shadow-sm"
-                                    : "text-slate-500 hover:text-slate-700"
+                                    ? "bg-[#F8F5EE] text-[#9C4A2E] shadow-sm"
+                                    : "text-black/50 hover:text-black"
                                 }`}
                         >
                             Login
@@ -263,8 +258,8 @@ export default function App() {
                             type="button"
                             onClick={() => switchMode("signup")}
                             className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition ${mode === "signup"
-                                    ? "bg-white text-indigo-600 shadow-sm"
-                                    : "text-slate-500 hover:text-slate-700"
+                                    ? "bg-[#F8F5EE] text-[#9C4A2E] shadow-sm"
+                                    : "text-black/50 hover:text-black"
                                 }`}
                         >
                             Sign Up
@@ -273,13 +268,13 @@ export default function App() {
 
                     {/* Heading */}
                     <div className="mb-6">
-                        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+                        <h2 className="font-display text-4xl tracking-tight text-[#191817]">
                             {mode === "login"
                                 ? "Sign in"
                                 : "Create account"}
                         </h2>
 
-                        <p className="mt-2 text-sm text-slate-500">
+                        <p className="mt-2 text-sm text-black/55">
                             {mode === "login"
                                 ? "Enter your details to access your account."
                                 : "Fill in your details to get started."}
@@ -298,7 +293,7 @@ export default function App() {
                             <div>
                                 <label
                                     htmlFor="name"
-                                    className="mb-2 block text-sm font-semibold text-slate-700"
+                                        className="mb-2 block text-sm font-semibold text-black/70"
                                 >
                                     Full name
                                 </label>
@@ -315,7 +310,7 @@ export default function App() {
                                         placeholder="John Doe"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="h-12 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                                        className="h-12 w-full border border-black/15 bg-transparent pl-11 pr-4 text-sm text-[#191817] outline-none transition placeholder:text-black/35 focus:border-[#9C4A2E] focus:ring-4 focus:ring-[#9C4A2E]/10"
                                     />
                                 </div>
                             </div>
@@ -325,7 +320,7 @@ export default function App() {
                         <div>
                             <label
                                 htmlFor="email"
-                                className="mb-2 block text-sm font-semibold text-slate-700"
+                                className="mb-2 block text-sm font-semibold text-black/70"
                             >
                                 Email address
                             </label>
@@ -342,7 +337,7 @@ export default function App() {
                                     placeholder="you@example.com"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="h-12 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                                    className="h-12 w-full border border-black/15 bg-transparent pl-11 pr-4 text-sm text-[#191817] outline-none transition placeholder:text-black/35 focus:border-[#9C4A2E] focus:ring-4 focus:ring-[#9C4A2E]/10"
                                 />
                             </div>
                         </div>
@@ -352,7 +347,7 @@ export default function App() {
                             <div className="mb-2 flex items-center justify-between">
                                 <label
                                     htmlFor="password"
-                                    className="block text-sm font-semibold text-slate-700"
+                                    className="block text-sm font-semibold text-black/70"
                                 >
                                     Password
                                 </label>
@@ -365,7 +360,7 @@ export default function App() {
                                                 "Password reset link requested."
                                             )
                                         }
-                                        className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                                        className="text-xs font-semibold text-[#9C4A2E] hover:text-[#B65B3A]"
                                     >
                                         Forgot password?
                                     </button>
@@ -388,7 +383,7 @@ export default function App() {
                                     placeholder="••••••••"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="h-12 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-12 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                                    className="h-12 w-full border border-black/15 bg-transparent pl-11 pr-12 text-sm text-[#191817] outline-none transition placeholder:text-black/35 focus:border-[#9C4A2E] focus:ring-4 focus:ring-[#9C4A2E]/10"
                                 />
 
                                 <button
@@ -396,7 +391,7 @@ export default function App() {
                                     onClick={() =>
                                         setShowPassword(!showPassword)
                                     }
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-black/40 hover:text-[#9C4A2E]"
                                 >
                                     {showPassword
                                         ? "🙈"
@@ -410,7 +405,7 @@ export default function App() {
                             <div>
                                 <label
                                     htmlFor="confirmPassword"
-                                    className="mb-2 block text-sm font-semibold text-slate-700"
+                                    className="mb-2 block text-sm font-semibold text-black/70"
                                 >
                                     Confirm password
                                 </label>
@@ -433,7 +428,7 @@ export default function App() {
                                             formData.confirmPassword
                                         }
                                         onChange={handleChange}
-                                        className="h-12 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-12 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                                        className="h-12 w-full border border-black/15 bg-transparent pl-11 pr-12 text-sm text-[#191817] outline-none transition placeholder:text-black/35 focus:border-[#9C4A2E] focus:ring-4 focus:ring-[#9C4A2E]/10"
                                     />
 
                                     <button
@@ -443,7 +438,7 @@ export default function App() {
                                                 !showConfirmPassword
                                             )
                                         }
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-black/40 hover:text-[#9C4A2E]"
                                     >
                                         {showConfirmPassword
                                             ? "🙈"
@@ -478,14 +473,14 @@ export default function App() {
                                     I agree to the{" "}
                                     <a
                                         href="#terms"
-                                        className="font-semibold text-indigo-600 hover:underline"
+                                        className="font-semibold text-[#9C4A2E] hover:underline"
                                     >
                                         Terms of Service
                                     </a>{" "}
                                     and{" "}
                                     <a
                                         href="#privacy"
-                                        className="font-semibold text-indigo-600 hover:underline"
+                                        className="font-semibold text-[#9C4A2E] hover:underline"
                                     >
                                         Privacy Policy
                                     </a>
@@ -511,7 +506,7 @@ export default function App() {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/25 active:translate-y-0"
+                            className="flex h-12 w-full items-center justify-center gap-2 bg-[#9C4A2E] text-sm font-bold text-[#F1ECE1] transition hover:bg-[#B65B3A] active:translate-y-px"
                         >
                             {mode === "login"
                                 ? "Sign in"
@@ -528,7 +523,7 @@ export default function App() {
                         <button
                             type="button"
                             onClick={handleSkip}
-                            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
+                            className="flex h-11 w-full items-center justify-center gap-2 border border-black/15 bg-transparent text-sm font-semibold text-black/60 transition hover:border-[#9C4A2E] hover:text-[#9C4A2E]"
                         >
                             Skip Login & Go to Dashboard
                             <span className="text-base">
@@ -538,7 +533,7 @@ export default function App() {
                     </form>
 
                     {/* Bottom Switch */}
-                    <div className="mt-6 text-center text-sm text-slate-500">
+                    <div className="mt-6 text-center text-sm text-black/55">
                         {mode === "login" ? (
                             <>
                                 Don't have an account?{" "}
@@ -548,7 +543,7 @@ export default function App() {
                                     onClick={() =>
                                         switchMode("signup")
                                     }
-                                    className="font-bold text-indigo-600 hover:text-indigo-700"
+                                    className="font-bold text-[#9C4A2E] hover:text-[#B65B3A]"
                                 >
                                     Sign up
                                 </button>
@@ -562,7 +557,7 @@ export default function App() {
                                     onClick={() =>
                                         switchMode("login")
                                     }
-                                    className="font-bold text-indigo-600 hover:text-indigo-700"
+                                    className="font-bold text-[#9C4A2E] hover:text-[#B65B3A]"
                                 >
                                     Sign in
                                 </button>

@@ -22,17 +22,12 @@ const readResponse = async (response) => {
 export default function App() {
     const navigate = useNavigate();
     const [mode, setMode] = useState("login");
-    const [authMethod, setAuthMethod] = useState("password");
-    const [otpChannel, setOtpChannel] = useState("email");
-    const [otpSent, setOtpSent] = useState(false);
-    const [otp, setOtp] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        phone: "",
         password: "",
         confirmPassword: "",
     });
@@ -50,14 +45,11 @@ export default function App() {
 
     const switchMode = (newMode) => {
         setMode(newMode);
-        setOtpSent(false);
-        setOtp("");
         setMessage("");
 
         setFormData({
             name: "",
             email: "",
-            phone: "",
             password: "",
             confirmPassword: "",
         });
@@ -65,42 +57,6 @@ export default function App() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (authMethod === "otp") {
-            const contact = otpChannel === "email" ? formData.email : formData.phone;
-            if (!contact) {
-                setMessage(`Please enter your ${otpChannel}.`);
-                return;
-            }
-
-            try {
-                const endpoint = otpSent ? "verify" : "send";
-                const response = await fetch(`${API_BASE_URL}/api/auth/otp/${endpoint}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        ...(otpChannel === "email" ? { email: contact } : { phone: contact }),
-                        ...(mode === "signup" && !otpSent ? { name: formData.name } : {}),
-                        ...(otpSent ? { token: otp } : {}),
-                    }),
-                });
-                const data = await readResponse(response);
-                if (!response.ok) throw new Error(data.message || "OTP request failed");
-
-                if (!otpSent) {
-                    setOtpSent(true);
-                    setMessage("OTP sent. Check your email or phone.");
-                } else {
-                    localStorage.setItem("token", data.token);
-                    localStorage.setItem("user", JSON.stringify(data.user));
-                    window.dispatchEvent(new Event("authChanged"));
-                    navigate("/account");
-                }
-            } catch (error) {
-                setMessage(error.message || "OTP request failed.");
-            }
-            return;
-        }
 
         // =========================
         // SIGN UP
@@ -160,7 +116,6 @@ export default function App() {
                 setFormData({
                     name: "",
                     email: "",
-                    phone: "",
                     password: "",
                     confirmPassword: "",
                 });
@@ -396,25 +351,6 @@ export default function App() {
                             <div>
                                 <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-slate-700">Mobile number</label>
                                 <input id="phone" name="phone" type="tel" placeholder="+91 9876543210" value={formData.phone} onChange={handleChange} className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-800 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
-                            </div>
-                        )}
-
-                        <div className="flex gap-2 rounded-xl bg-slate-100 p-1">
-                            <button type="button" onClick={() => { setAuthMethod("password"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2 text-xs font-semibold ${authMethod === "password" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500"}`}>Password</button>
-                            <button type="button" onClick={() => { setAuthMethod("otp"); setOtpSent(false); }} className={`flex-1 rounded-lg py-2 text-xs font-semibold ${authMethod === "otp" ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500"}`}>Email / Mobile OTP</button>
-                        </div>
-
-                        {authMethod === "otp" && (
-                            <div className="flex gap-4 text-xs text-slate-600">
-                                <label><input type="radio" checked={otpChannel === "email"} onChange={() => setOtpChannel("email")} /> Email</label>
-                                <label><input type="radio" checked={otpChannel === "phone"} onChange={() => setOtpChannel("phone")} /> Mobile</label>
-                            </div>
-                        )}
-
-                        {authMethod === "otp" && otpSent && (
-                            <div>
-                                <label htmlFor="otp" className="mb-2 block text-sm font-semibold text-slate-700">Verification code</label>
-                                <input id="otp" inputMode="numeric" maxLength="6" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter 6-digit OTP" className="h-12 w-full rounded-xl border border-slate-200 px-4 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
                             </div>
                         )}
 

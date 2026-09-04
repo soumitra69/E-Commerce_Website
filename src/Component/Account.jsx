@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LogOut, ShoppingBag, UserRound } from "lucide-react";
 import Header from "../ComonPage/Header";
@@ -7,11 +8,22 @@ import { useCart } from "../Context/CartContext";
 export default function Account() {
     const navigate = useNavigate();
     const { cartCount, cartTotal } = useCart();
-    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || "null"));
+
+    useEffect(() => {
+        const refreshUser = () => setUser(JSON.parse(localStorage.getItem("user") || "null"));
+        window.addEventListener("storage", refreshUser);
+        window.addEventListener("authChanged", refreshUser);
+        return () => {
+            window.removeEventListener("storage", refreshUser);
+            window.removeEventListener("authChanged", refreshUser);
+        };
+    }, []);
 
     const signOut = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        window.dispatchEvent(new Event("authChanged"));
         navigate("/login-signup");
     };
 

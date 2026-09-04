@@ -93,6 +93,7 @@ export default function App() {
                 } else {
                     localStorage.setItem("token", data.token);
                     localStorage.setItem("user", JSON.stringify(data.user));
+                    window.dispatchEvent(new Event("authChanged"));
                     navigate("/account");
                 }
             } catch (error) {
@@ -212,6 +213,7 @@ export default function App() {
                 // SAVE USER
                 // =========================
                 localStorage.setItem("user", JSON.stringify(data.user));
+                window.dispatchEvent(new Event("authChanged"));
 
                 // =========================
                 // GO TO DASHBOARD

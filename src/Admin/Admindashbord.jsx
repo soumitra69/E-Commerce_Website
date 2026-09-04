@@ -131,6 +131,7 @@ function readLocalStorage(key, fallback) {
 
 function AdminDashboard() {
     const navigate = useNavigate();
+    const isAdminLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
 
     // ======================================================
     // REFS
@@ -281,6 +282,11 @@ function AdminDashboard() {
     // ======================================================
 
     useEffect(() => {
+        if (!isAdminLoggedIn) {
+            navigate("/adminlogin", { replace: true });
+            return;
+        }
+
         const init = async () => {
             loadDashboard();
             await loadProducts();
@@ -288,7 +294,7 @@ function AdminDashboard() {
         };
 
         init();
-    }, []);
+    }, [isAdminLoggedIn, navigate]);
 
 
     // ======================================================

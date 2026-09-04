@@ -1212,6 +1212,47 @@ function Dashboard() {
 
 
             {/* ==================================================
+                OFFERS
+            ================================================== */}
+
+            <section className="border-t border-[#D8D0C2] bg-[#DED7C8]">
+                <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 md:px-10 md:py-20">
+                    <div className="grid gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-end">
+                        <div>
+                            <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-[#9C4A2E]">
+                                Norden / Limited offers
+                            </p>
+                            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
+                                Good pieces, better timing.
+                            </h2>
+                            <p className="mt-5 max-w-md text-sm leading-relaxed text-[#4a4740]">
+                                Explore this week&apos;s edit and find considered essentials at special seasonal prices.
+                            </p>
+                            <Link to="/women" className="mt-7 inline-flex border-b border-[#201E1B] pb-2 text-sm font-semibold">
+                                Shop the offers
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                            {featuredProducts.slice(0, 4).map((product) => (
+                                <Link key={product.id} to={`/product/${product.id}`} className="group">
+                                    <div className="relative aspect-[3/4] overflow-hidden bg-[#F1ECE1]">
+                                        <img src={product.thumbnail} alt={product.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                        <span className="absolute left-2 top-2 bg-[#9C4A2E] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-[#F1ECE1]">
+                                            Offer
+                                        </span>
+                                    </div>
+                                    <p className="mt-3 line-clamp-2 text-xs leading-snug">{product.title}</p>
+                                    <p className="mt-1 font-mono text-xs text-[#9C4A2E]">₹{Number(product.price || 0).toLocaleString("en-IN")}</p>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            {/* ==================================================
                 FINAL CTA
             ================================================== */}
 
